@@ -1,5 +1,5 @@
 class Car {
-    constructor(x, y, width, height, controlType, maxSpeed = 3) {
+    constructor(x, y, width, height, controlType, maxSpeed = 4.5) {
         this.x = x;
         this.y = y;
         this.width = width;
@@ -13,11 +13,12 @@ class Car {
         this.angle = 0;
         this.damaged = false;
 
-        this.useBrain = controlType=="AI";
+        this.train = controlType == "TRAIN";
+        this.useBrain = controlType == "AI";
         if (controlType != "DUMMY") {
             this.sensor = new Sensor(this);
-            this.brain=new NeuralNetwork(
-                [this.sensor.rayCount,6,4]
+            this.brain = new NeuralNetwork(
+                [this.sensor.rayCount, this.sensor.rayCount + 2, 4]
             );
         }
         this.controls = new controls(controlType);
@@ -32,15 +33,15 @@ class Car {
         }
         if (this.sensor) {
             this.sensor.update(roadBorders, traffic);
-            const offsets=this.sensor.readings.map(s=>s==null?0:s.offset);
-            const outputs=NeuralNetwork.feedForward(offsets, this.brain);
-            console.log(outputs);
+            const offsets = this.sensor.readings.map(s => s == null ? 0 : s.offset);
+            const outputs = NeuralNetwork.feedForward(offsets, this.brain);
 
+            // }
             if (this.useBrain) {
-                this.controls.forward = outputs[0];
-                this.controls.left =outputs[1];
-                this.controls.right =outputs[2];
-                this.controls.reverse = outputs[3];
+                this.controls.forward = activateOutput(outputs[0]);
+                this.controls.left = activateOutput(outputs[1]);
+                this.controls.right = activateOutput(outputs[2]);
+                this.controls.reverse = activateOutput(outputs[3]);
             }
         }
     }
@@ -128,10 +129,10 @@ class Car {
         if (this.speed != 0) {
             const flip = this.speed < 0 ? -1 : 1;
             if (this.controls.left) {
-                this.angle += 0.03 * flip;
+                this.angle += 0.01   * flip;
             }
             if (this.controls.right) {
-                this.angle -= 0.03 * flip;
+                this.angle -= 0.01 * flip;
             }
 
         }
@@ -141,7 +142,7 @@ class Car {
         this.x -= this.speed * Math.sin(this.angle);
 
     }
-    draw(ctx, color) {
+    draw(ctx, color, showSensor=false) {
         if (this.damaged) {
             ctx.fillStyle = "gray";
         } else {
@@ -176,8 +177,9 @@ class Car {
         // ctx.fill()
         // ctx.restore();
         if (this.sensor) {
-            this.sensor.draw(ctx);
-
+            if (showSensor) {
+                this.sensor.draw(ctx);
+            }
         }
     }
 }

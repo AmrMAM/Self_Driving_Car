@@ -44,3 +44,49 @@ function polysIntersect(poly1, poly2) {
 
     return false;
 }
+
+function getRGBA(value){
+    const alpha=Math.abs(value);
+    const R=value<0?0:255;
+    const G=R;
+    const B=value>0?0:255;
+    return "rgba("+R+","+G+","+B+","+alpha+")";
+}
+
+function sigmoid(num) {
+    return (1/(1+Math.exp(-num)));
+}
+
+function sigmoidArray(arrayNum) {
+    return arrayNum.map(num=>sigmoid(num));
+}
+
+function activateOutput(val) {
+    if (val>=0.5) {
+        return 1;
+    }else{
+        return 0;
+    }
+}
+
+function activateOutputArray(outputs) {
+    return outputs.map((t)=>t>=0.5?1:0);
+}
+
+function readTextFile(file)
+{
+    var rawFile = new XMLHttpRequest();
+    rawFile.open("GET", file, false);
+    rawFile.onreadystatechange = function ()
+    {
+        if(rawFile.readyState === 4)
+        {
+            if(rawFile.status === 200 || rawFile.status == 0)
+            {
+                var allText = rawFile.responseText;
+                alert(allText);
+            }
+        }
+    }
+    rawFile.send(null);
+}

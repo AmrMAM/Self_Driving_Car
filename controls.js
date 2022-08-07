@@ -5,7 +5,23 @@ class controls {
         this.right = false;
         this.reverse = false;
 
+
         switch (type) {
+            case "AI":
+                document.onkeydown = (ev) => {
+                    if (ev.key == "x") {
+                        isRecording = true;
+                    }
+                };
+                document.onkeyup = (ev) => {
+                    if (ev.key == "x") {
+                        isRecording = false;
+                    }
+                };
+                break;
+            case "TRAIN":
+                this.#addKeyboardListeners();
+                break;
             case "KEYS":
                 this.#addKeyboardListeners();
                 break;
@@ -31,8 +47,13 @@ class controls {
                 case "ArrowDown":
                     this.reverse = true;
                     break;
+                case "x":
+                    isRecording = true;
+                    break;
             }
-            console.table(this);
+            // console.table(this);
+            // console.table(bestCar);
+            // console.log(event.key);
         };
         document.onkeyup = (event) => {
             switch (event.key) {
@@ -48,8 +69,11 @@ class controls {
                 case "ArrowDown":
                     this.reverse = false;
                     break;
+                case "x":
+                    isRecording = false;
+                    break;
             }
-            console.table(this);
+            // console.table(this);
         };
     }
 
